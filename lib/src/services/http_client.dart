@@ -1,11 +1,11 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:dart_helper/src/utils/logger.dart';
+import 'package:dart_helper_cli/src/utils/logger.dart';
 import '../models/version.dart';
 
 class HttpClient {
   Future<Version?> getLatestVersion() async {
-    const packageName = 'dart_helper';
+    const packageName = 'dart_helper_cli';
     final url = Uri.parse('https://pub.dev/api/packages/$packageName');
 
     try {
