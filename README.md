@@ -21,7 +21,7 @@ The tool automatically detects the necessary directories (`*_flutter`, `*_server
 ## 🚀 Installation
 
 ```bash
-dart pub global activate dart_helper
+dart pub global activate dart_helper_cli
 ```
 
 The legacy `nit-helper` executable remains available as a compatibility alias.

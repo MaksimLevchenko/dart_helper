@@ -18,8 +18,8 @@ class UpdateService {
 
       if (currentVersion < latestVersion) {
         print(
-            '\x1B[33mA new version of dart_helper is available: $latestVersion (current: $currentVersion)\x1B[0m');
-        print('Please update using "dart pub global activate dart_helper"');
+            '\x1B[33mA new version of dart_helper_cli is available: $latestVersion (current: $currentVersion)\x1B[0m');
+        print('Please update using "dart pub global activate dart_helper_cli"');
       }
     } catch (_) {
       // Без вывода ошибок
