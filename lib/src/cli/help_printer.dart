@@ -56,9 +56,11 @@ Examples:
 
 Check Command Features:
   • Unused Dart files detection and removal
-  • Smart dependency analysis via import/export parsing
+  • AST-based dependency analysis via import/export/part parsing
+  • Package-aware resolution for local package: URIs
   • Automatic exclusion of generated files (*.g.dart, *.freezed.dart, etc.)
   • Interactive cleanup with confirmation prompts
+  • Explicit warnings for unresolved or unreadable files
   • Cross-platform support (Windows, macOS, Linux)
   • Detailed size reporting of unused files
 

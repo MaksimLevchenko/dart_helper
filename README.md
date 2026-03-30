@@ -126,9 +126,11 @@ dh check -p ./project -e "*.test.dart" -f "temp" -i
 ```
 
 Features:
-* Smart dependency analysis via import/export parsing
+* AST-based dependency analysis via import/export/part parsing
+* Package-aware resolution for local `package:` imports
 * Automatic exclusion of generated files (*.g.dart, *.freezed.dart, etc.)
 * Interactive cleanup with confirmation prompts
+* Explicit warnings for unresolved or unreadable files
 * Cross-platform support
 * Detailed size reporting
 
