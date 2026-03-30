@@ -37,7 +37,7 @@
 ## [1.5.1]
 
 ### 🐛 Changed
-- **Cleanup**: Removed unused exports from `lib/nit_helper.dart` to streamline the library interface
+- **Cleanup**: Removed unused exports from `lib/dart_helper.dart` to streamline the library interface
 
 ---
 
@@ -56,7 +56,7 @@
 - **Interactive Cleanup**: Added interactive mode for unused files removal with user confirmation
 - **Smart File Analysis**: Dependency graph analysis via import/export parsing to accurately detect unused files
 - **Flexible Exclusions**: Support for custom file patterns and folder exclusions via command-line options
-- **Test Project**: Added comprehensive test project with freezed models to validate nit-helper functionality
+- **Test Project**: Added comprehensive test project with freezed models to validate dart_helper functionality
 
 ### 🔧 Changed  
 - **Project Structure**: Refactored entire codebase to separate models into individual files for improved maintainability
@@ -81,7 +81,7 @@
 ## [1.3.5]
 
 ### 🐛 Fixed
-- **Version Checking**: Resolved bug where nit-helper incorrectly validated current version information
+- **Version Checking**: Resolved bug where dart_helper incorrectly validated current version information
 
 ---
 

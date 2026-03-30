@@ -1,4 +1,4 @@
-name: nit_helper
+name: dart_helper
 description: A CLI tool for building Flutter and Serverpod projects with fvm support.
 version: 1.5.5
 repository: https://github.com/MaksimLevchenko/nit_helper
@@ -10,6 +10,7 @@ dependencies:
   http: ^1.4.0
 
 executables:
+  dh: main
   nit-helper: main
 
 dev_dependencies:

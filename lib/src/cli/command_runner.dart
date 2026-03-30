@@ -1,5 +1,5 @@
 import 'package:args/args.dart';
-import 'package:nit_helper/src/commands/get_all_command.dart';
+import 'package:dart_helper/src/commands/get_all_command.dart';
 import '../commands/build_command.dart';
 import '../commands/check_command.dart';
 import '../services/update_service.dart';

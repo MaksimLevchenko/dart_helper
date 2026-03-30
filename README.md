@@ -1,6 +1,6 @@
-# nit-helper
+# dart_helper
 
-**nit-helper** is a cross-platform Dart CLI tool designed to automate building Flutter and Serverpod projects, with support for monorepo structures.
+**dart_helper** is a cross-platform Dart CLI tool designed to automate building Flutter and Serverpod projects, with support for monorepo structures.
 
 The tool automatically detects the necessary directories (`*_flutter`, `*_server`) and executes the appropriate commands, with optional `fvm` support. Additionally, it can manage dependencies across multiple subprojects in large project hierarchies.
 
@@ -12,7 +12,7 @@ The tool automatically detects the necessary directories (`*_flutter`, `*_server
 - 🛠 Code generation and migrations for Serverpod  
 - 🔁 Support for `fvm` (Flutter Version Management)  
 - 🧠 Smart project structure navigation  
-- 🔧 Commands unified in a single CLI: `nit-helper`  
+- 🔧 Commands unified in a single CLI: `dh`  
 - 🗑️ Unused files detection and cleanup
 - 📚 Get-All command for monorepo dependency management with tree-structured output
 
@@ -21,8 +21,10 @@ The tool automatically detects the necessary directories (`*_flutter`, `*_server
 ## 🚀 Installation
 
 ```bash
-dart pub global activate nit_helper
+dart pub global activate dart_helper
 ```
+
+The legacy `nit-helper` executable remains available as a compatibility alias.
 
 Ensure that the Dart global utilities path is added to `PATH`:
 
@@ -46,12 +48,12 @@ Ensure that the Dart global utilities path is added to `PATH`:
 Builds the Flutter project (searches for a directory ending with `_flutter`, or works in the current directory if it matches).
 
 ```bash
-nit-helper build
+dh build
 ```
 
 With `fvm`:
 ```bash
-nit-helper build --fvm
+dh build --fvm
 ```
 
 Executes commands:
@@ -65,17 +67,17 @@ Executes commands:
 Generates Serverpod code and applies migrations. Searches for a directory ending with `_server`.
 
 ```bash
-nit-helper build-server
+dh build-server
 ```
 
 Force migration creation:
 ```bash
-nit-helper build-server --force
+dh build-server --force
 ```
 
 With `fvm`:
 ```bash
-nit-helper build-server --fvm
+dh build-server --fvm
 ```
 
 Executes commands:
@@ -90,12 +92,12 @@ Executes commands:
 Combines `build` and `build-server`:
 
 ```bash
-nit-helper build-full
+dh build-full
 ```
 
 With options:
 ```bash
-nit-helper build-full --fvm --force
+dh build-full --fvm --force
 ```
 
 ---
@@ -105,22 +107,22 @@ nit-helper build-full --fvm --force
 Analyzes the project for unused Dart files and provides cleanup options.
 
 ```bash
-nit-helper check
+dh check
 ```
 
 With options:
 ```bash
 # Scan specific project
-nit-helper check --path ./my_project
+dh check --path ./my_project
 
 # Exclude patterns and folders
-nit-helper check --exclude-pattern "*.g.dart" --exclude-folder "generated"
+dh check --exclude-pattern "*.g.dart" --exclude-folder "generated"
 
 # Interactive cleanup mode
-nit-helper check --interactive
+dh check --interactive
 
 # Combine options
-nit-helper check -p ./project -e "*.test.dart" -f "temp" -i
+dh check -p ./project -e "*.test.dart" -f "temp" -i
 ```
 
 Features:
@@ -137,17 +139,17 @@ Features:
 Recursively finds all subprojects with `pubspec.yaml` and runs `dart pub get` in each. Automatically excludes standard Flutter folders to avoid unnecessary scanning.
 
 ```bash
-nit-helper get-all
+dh get-all
 ```
 
 With custom path:
 ```bash
-nit-helper get-all --path ./my_monorepo
+dh get-all --path ./my_monorepo
 ```
 
 With `fvm`:
 ```bash
-nit-helper get-all --path ./packages --fvm
+dh get-all --path ./packages --fvm
 ```
 
 Features:
@@ -197,28 +199,28 @@ All projects processed successfully! 🎉
 
 ```bash
 # Build Flutter with fvm
-nit-helper build --fvm
+dh build --fvm
 
 # Build Serverpod with forced migration
-nit-helper build-server --force
+dh build-server --force
 
 # Full project build
-nit-helper build-full --fvm --force
+dh build-full --fvm --force
 
 # Check for unused files
-nit-helper check
+dh check
 
 # Interactive cleanup with exclusions  
-nit-helper check --exclude-pattern "*.g.dart" --interactive
+dh check --exclude-pattern "*.g.dart" --interactive
 
 # Get dependencies for all subprojects in current directory
-nit-helper get-all
+dh get-all
 
 # Get dependencies for specific monorepo path
-nit-helper get-all --path ./packages
+dh get-all --path ./packages
 
 # Get dependencies with FVM
-nit-helper get-all -p ./my_monorepo --fvm
+dh get-all -p ./my_monorepo --fvm
 ```
 
 ---
@@ -240,7 +242,7 @@ project_root/
 │       └── pubspec.yaml
 ```
 
-`nit-helper` will automatically detect where `*_flutter` and `*_server` are located and execute the appropriate commands. The `get-all` command is particularly useful in monorepo structures like the one above, scanning through all nested `pubspec.yaml` files and installing dependencies for each.
+`dh` will automatically detect where `*_flutter` and `*_server` are located and execute the appropriate commands. The `get-all` command is particularly useful in monorepo structures like the one above, scanning through all nested `pubspec.yaml` files and installing dependencies for each.
 
 ---
 

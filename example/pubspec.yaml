@@ -1,5 +1,5 @@
 name: test_freezed_project
-description: Test project for nit-helper with Freezed
+description: Test project for dart_helper with Freezed
 version: 1.0.0
 
 environment:

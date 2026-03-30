@@ -1,15 +1,15 @@
 class HelpPrinter {
   void printHelp() {
     print('''
-nit-helper - Unified build tool for Dart/Flutter/Serverpod projects
+dh - Unified build tool for Dart/Flutter/Serverpod projects
 
 
 Usage:
-  nit-helper build [--fvm] [--force]           Build Flutter module
-  nit-helper build-server [--fvm] [--force]    Build Serverpod server
-  nit-helper build-full [--fvm] [--force]      Build both frontend and backend
-  nit-helper check [options]                   Analyze project for unused files
-  nit-helper get-all [options]                 Run "dart pub get" in all subprojects
+  dh build [--fvm] [--force]                   Build Flutter module
+  dh build-server [--fvm] [--force]            Build Serverpod server
+  dh build-full [--fvm] [--force]              Build both frontend and backend
+  dh check [options]                           Analyze project for unused files
+  dh get-all [options]                         Run "dart pub get" in all subprojects
 
 
 Global Options:
@@ -34,24 +34,24 @@ Get-All Command Options:
 
 Examples:
   # Build commands
-  nit-helper build --fvm
-  nit-helper build-server --force
-  nit-helper build-full --fvm --force
+  dh build --fvm
+  dh build-server --force
+  dh build-full --fvm --force
   
   # Check command
-  nit-helper check
-  nit-helper check --path ./my_project
-  nit-helper check --exclude-pattern "*.g.dart" --exclude-pattern "*.freezed.dart"
-  nit-helper check --exclude-folder "generated" --exclude-folder "build"
-  nit-helper check --interactive --no-details
-  nit-helper check -p ./project -e "*.test.dart" -f "temp" -i
+  dh check
+  dh check --path ./my_project
+  dh check --exclude-pattern "*.g.dart" --exclude-pattern "*.freezed.dart"
+  dh check --exclude-folder "generated" --exclude-folder "build"
+  dh check --interactive --no-details
+  dh check -p ./project -e "*.test.dart" -f "temp" -i
   
   # Get-all command
-  nit-helper get-all
-  nit-helper get-all --path ./packages
-  nit-helper get-all -p ./my_monorepo --fvm
-  nit-helper get-all --interactive --no-tree    # Simple list view with confirmation
-  nit-helper get-all -i -t                      # Tree view with confirmation
+  dh get-all
+  dh get-all --path ./packages
+  dh get-all -p ./my_monorepo --fvm
+  dh get-all --interactive --no-tree    # Simple list view with confirmation
+  dh get-all -i -t                      # Tree view with confirmation
 
 
 Check Command Features:

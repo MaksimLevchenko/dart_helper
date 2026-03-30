@@ -18,8 +18,8 @@ class UpdateService {
 
       if (currentVersion < latestVersion) {
         print(
-            '\x1B[33mA new version of nit-helper is available: $latestVersion (current: $currentVersion)\x1B[0m');
-        print('Please update using "dart pub global activate nit_helper"');
+            '\x1B[33mA new version of dart_helper is available: $latestVersion (current: $currentVersion)\x1B[0m');
+        print('Please update using "dart pub global activate dart_helper"');
       }
     } catch (_) {
       // Без вывода ошибок
