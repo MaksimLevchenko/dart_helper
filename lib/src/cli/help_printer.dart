@@ -59,6 +59,7 @@ Check Command Features:
   • AST-based dependency analysis via import/export/part parsing
   • Package-aware resolution for local package: URIs
   • Automatic exclusion of generated files (*.g.dart, *.freezed.dart, etc.)
+  • Automatic exclusion of client/server/build folders (*_client, *_server, build, etc.)
   • Interactive cleanup with confirmation prompts
   • Explicit warnings for unresolved or unreadable files
   • Cross-platform support (Windows, macOS, Linux)
@@ -79,9 +80,9 @@ Get-All Command Features:
 
 
 Automatically Excluded Folders:
-  build, ios, android, web, linux, macos, windows, .dart_tool, .git, .github,
-  .vscode, .idea, node_modules, .pub-cache, .gradle, .m2, DerivedData, Pods,
-  doc, docs, documentation
+  build, ios, android, web, linux, macos, windows, *_server, *_client, .dart_tool, .git,
+  .github, .vscode, .idea, node_modules, .pub-cache, .gradle, .m2, DerivedData,
+  Pods, doc, docs, documentation
 
 
 Automatically Excluded Files:

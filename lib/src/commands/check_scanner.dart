@@ -48,6 +48,9 @@ class UnusedFileScanner {
     'build',
     '.fvm',
     '.git',
+    '_client',
+    '_server',
+    'windows',
   ];
 
   Future<UnusedFileResult> scanProject({
@@ -109,6 +112,14 @@ class UnusedFileScanner {
       );
 
       if (_isEntryPoint(filePath, unit)) {
+        entryPoints.add(filePath);
+      }
+
+      if (_isProtectedPublicExportBarrel(
+        filePath: filePath,
+        unit: unit,
+        fileOwners: fileOwners,
+      )) {
         entryPoints.add(filePath);
       }
     }
@@ -510,6 +521,40 @@ class UnusedFileScanner {
     return visitor.found;
   }
 
+  bool _isProtectedPublicExportBarrel({
+    required String filePath,
+    required CompilationUnit unit,
+    required Map<String, _PackageRoot?> fileOwners,
+  }) {
+    if (unit.declarations.isNotEmpty) {
+      return false;
+    }
+
+    final hasExportDirective =
+        unit.directives.any((directive) => directive is ExportDirective);
+    if (!hasExportDirective) {
+      return false;
+    }
+
+    final owningRoot = fileOwners[_normalizeExistingPath(filePath)];
+    if (owningRoot == null) {
+      return false;
+    }
+
+    final normalizedPath = _normalizeExistingPath(filePath);
+    if (!_isWithin(normalizedPath, owningRoot.libDirectoryPath)) {
+      return false;
+    }
+
+    final srcDirectory =
+        '${owningRoot.libDirectoryPath}${Platform.pathSeparator}src';
+    if (_isWithin(normalizedPath, srcDirectory)) {
+      return false;
+    }
+
+    return true;
+  }
+
   bool _isUnderTestFolder(String filePath) {
     final segments = _pathSegments(filePath);
     return segments.contains('test') || segments.contains('integration_test');
@@ -546,10 +591,25 @@ class UnusedFileScanner {
     final segments = _pathSegments(path);
     for (final folder in excludeFolders) {
       final folderKey = _comparisonKey(folder);
-      if (segments.contains(folderKey)) {
+      if (segments.any((segment) => _matchesExcludedFolderSegment(
+            segment,
+            folderKey,
+          ))) {
         return true;
       }
     }
+    return false;
+  }
+
+  bool _matchesExcludedFolderSegment(String segment, String folderKey) {
+    if (segment == folderKey) {
+      return true;
+    }
+
+    if (folderKey == '_server' || folderKey == '_client') {
+      return segment.endsWith(folderKey);
+    }
+
     return false;
   }
 

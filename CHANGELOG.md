@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.5.7]
+
+### 🐛 Fixed
+
+- Improved `check` to better handle route-driven Flutter apps, public barrel files, and Serverpod package-root exclusions.
+
+---
+
 ## [1.5.6]
 
 ### 🐛 Changed

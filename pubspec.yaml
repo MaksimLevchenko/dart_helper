@@ -1,6 +1,6 @@
 name: dart_helper_cli
 description: A CLI tool for building Flutter and Serverpod projects with fvm support.
-version: 1.5.6
+version: 1.5.7
 repository: https://github.com/MaksimLevchenko/dart_helper
 environment:
   sdk: '>=2.18.0 <4.0.0'

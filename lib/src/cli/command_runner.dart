@@ -127,8 +127,7 @@ class CommandRunner {
 
       // Параметры для команд build
       if (commandArgs != null &&
-          commandName != 'check' &&
-          commandName != 'get-all') {
+          ['build', 'build-server', 'build-full'].contains(commandName)) {
         useFvm = commandArgs['fvm'] as bool? ?? false;
         if (['build-server', 'build-full', 'build'].contains(commandName)) {
           force = commandArgs['force'] as bool? ?? false;
