@@ -10,6 +10,19 @@ import 'help_printer.dart';
 import 'error_handler.dart';
 
 class CommandRunner {
+  static const Map<String, String> _commandAliases = {
+    'build': 'build',
+    'b': 'build',
+    'build-server': 'build-server',
+    'bs': 'build-server',
+    'build-full': 'build-full',
+    'bf': 'build-full',
+    'check': 'check',
+    'c': 'check',
+    'get-all': 'get-all',
+    'ga': 'get-all',
+  };
+
   final BuildCommand _buildCommand;
   final CheckCommand _checkCommand;
   final GetAllCommand _getAllCommand;
@@ -45,10 +58,15 @@ class CommandRunner {
   ArgParser _buildParser() {
     return ArgParser()
       ..addCommand('build', _buildBuildParser())
+      ..addCommand('b', _buildBuildParser())
       ..addCommand('build-server', _buildBuildParser())
+      ..addCommand('bs', _buildBuildParser())
       ..addCommand('build-full', _buildBuildParser())
+      ..addCommand('bf', _buildBuildParser())
       ..addCommand('get-all', _buildGetAllParser())
-      ..addCommand('check', _buildCheckParser());
+      ..addCommand('ga', _buildGetAllParser())
+      ..addCommand('check', _buildCheckParser())
+      ..addCommand('c', _buildCheckParser());
   }
 
   ArgParser _buildBuildParser() {
@@ -119,7 +137,8 @@ class CommandRunner {
   ParsedCommand _parseCommand(ArgParser parser, List<String> args) {
     try {
       final result = parser.parse(args);
-      final commandName = result.command?.name;
+      final rawCommandName = result.command?.name;
+      final commandName = _normalizeCommandName(rawCommandName);
       final commandArgs = result.command;
 
       bool useFvm = false;
@@ -180,6 +199,14 @@ class CommandRunner {
     } catch (e) {
       throw ArgumentError('Failed to parse arguments: $e');
     }
+  }
+
+  String? _normalizeCommandName(String? commandName) {
+    if (commandName == null) {
+      return null;
+    }
+
+    return _commandAliases[commandName] ?? commandName;
   }
 
   Future<int> _executeCommand(ParsedCommand command) async {

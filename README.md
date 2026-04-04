@@ -24,7 +24,12 @@ The tool automatically detects the necessary directories (`*_flutter`, `*_server
 dart pub global activate dart_helper_cli
 ```
 
-The legacy `nit-helper` executable remains available as a compatibility alias.
+Available executable aliases:
+
+* `dh`
+* `dart-helper`
+* `dart_helper`
+* `nit-helper` (legacy compatibility alias)
 
 Ensure that the Dart global utilities path is added to `PATH`:
 
@@ -43,17 +48,21 @@ Ensure that the Dart global utilities path is added to `PATH`:
 
 ## 🧪 Usage
 
-### 🔨 `build`
+You can invoke the CLI with any executable alias above. Examples below use `dh`.
+
+### 🔨 `build` / `b`
 
 Builds the Flutter project (searches for a directory ending with `_flutter`, or works in the current directory if it matches).
 
 ```bash
 dh build
+dh b
 ```
 
 With `fvm`:
 ```bash
 dh build --fvm
+dh b --fvm
 ```
 
 Executes commands:
@@ -62,22 +71,25 @@ Executes commands:
 
 ---
 
-### 🖥 `build-server`
+### 🖥 `build-server` / `bs`
 
 Generates Serverpod code and applies migrations. Searches for a directory ending with `_server`.
 
 ```bash
 dh build-server
+dh bs
 ```
 
 Force migration creation:
 ```bash
 dh build-server --force
+dh bs --force
 ```
 
 With `fvm`:
 ```bash
 dh build-server --fvm
+dh bs --fvm
 ```
 
 Executes commands:
@@ -87,42 +99,49 @@ Executes commands:
 
 ---
 
-### 🔁 `build-full`
+### 🔁 `build-full` / `bf`
 
 Combines `build` and `build-server`:
 
 ```bash
 dh build-full
+dh bf
 ```
 
 With options:
 ```bash
 dh build-full --fvm --force
+dh bf --fvm --force
 ```
 
 ---
 
-### 🔍 `check`
+### 🔍 `check` / `c`
 
 Analyzes the project for unused Dart files and provides cleanup options.
 
 ```bash
 dh check
+dh c
 ```
 
 With options:
 ```bash
 # Scan specific project
 dh check --path ./my_project
+dh c --path ./my_project
 
 # Exclude patterns and folders
 dh check --exclude-pattern "*.g.dart" --exclude-folder "generated"
+dh c --exclude-pattern "*.g.dart" --exclude-folder "generated"
 
 # Interactive cleanup mode
 dh check --interactive
+dh c --interactive
 
 # Combine options
 dh check -p ./project -e "*.test.dart" -f "temp" -i
+dh c -p ./project -e "*.test.dart" -f "temp" -i
 ```
 
 Features:
@@ -136,22 +155,25 @@ Features:
 
 ---
 
-### 📚 `get-all`
+### 📚 `get-all` / `ga`
 
 Recursively finds all subprojects with `pubspec.yaml` and runs `dart pub get` in each. Automatically excludes standard Flutter folders to avoid unnecessary scanning.
 
 ```bash
 dh get-all
+dh ga
 ```
 
 With custom path:
 ```bash
 dh get-all --path ./my_monorepo
+dh ga --path ./my_monorepo
 ```
 
 With `fvm`:
 ```bash
 dh get-all --path ./packages --fvm
+dh ga --path ./packages --fvm
 ```
 
 Features:
@@ -187,13 +209,13 @@ All projects processed successfully! 🎉
 
 | Argument | Command | Description |
 | -------- | ------- | ----------- |
-| `--fvm` | build, build-server, build-full, get-all | Execute through `fvm exec` |
-| `--force` | build-server, build-full | Force create migrations |
-| `--path`, `-p` | check, get-all | Path to project directory |
-| `--exclude-pattern`, `-e` | check | File patterns to exclude |
-| `--exclude-folder`, `-f` | check | Folders to exclude |
-| `--interactive`, `-i` | check | Enable interactive cleanup |
-| `--details`, `-d` | check | Show detailed file list |
+| `--fvm` | build / b, build-server / bs, build-full / bf, get-all / ga | Execute through `fvm exec` |
+| `--force` | build-server / bs, build-full / bf | Force create migrations |
+| `--path`, `-p` | check / c, get-all / ga | Path to project directory |
+| `--exclude-pattern`, `-e` | check / c | File patterns to exclude |
+| `--exclude-folder`, `-f` | check / c | Folders to exclude |
+| `--interactive`, `-i` | check / c | Enable interactive cleanup |
+| `--details`, `-d` | check / c | Show detailed file list |
 
 ---
 
@@ -202,27 +224,35 @@ All projects processed successfully! 🎉
 ```bash
 # Build Flutter with fvm
 dh build --fvm
+dh b --fvm
 
 # Build Serverpod with forced migration
 dh build-server --force
+dh bs --force
 
 # Full project build
 dh build-full --fvm --force
+dh bf --fvm --force
 
 # Check for unused files
 dh check
+dh c
 
 # Interactive cleanup with exclusions  
 dh check --exclude-pattern "*.g.dart" --interactive
+dh c --exclude-pattern "*.g.dart" --interactive
 
 # Get dependencies for all subprojects in current directory
 dh get-all
+dh ga
 
 # Get dependencies for specific monorepo path
 dh get-all --path ./packages
+dh ga --path ./packages
 
 # Get dependencies with FVM
 dh get-all -p ./my_monorepo --fvm
+dh ga -p ./my_monorepo --fvm
 ```
 
 ---
@@ -244,7 +274,7 @@ project_root/
 │       └── pubspec.yaml
 ```
 
-`dh` will automatically detect where `*_flutter` and `*_server` are located and execute the appropriate commands. The `get-all` command is particularly useful in monorepo structures like the one above, scanning through all nested `pubspec.yaml` files and installing dependencies for each.
+`dh` will automatically detect where `*_flutter` and `*_server` are located and execute the appropriate commands. The same behavior is available through `dart-helper`, `dart_helper`, and `nit-helper`. The `get-all` command is particularly useful in monorepo structures like the one above, scanning through all nested `pubspec.yaml` files and installing dependencies for each.
 
 ---
 

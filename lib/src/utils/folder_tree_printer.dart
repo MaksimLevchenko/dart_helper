@@ -10,7 +10,7 @@ class FolderTreePrinter {
   static const String _lastItem = '└── ';
   static const String _spacing = '    ';
 
-  /// Print tree. Принимает Map<String, dynamic> или Map<String, bool>
+  /// Print tree. Принимает `Map<String, dynamic>` или `Map<String, bool>`.
   static void printProjectTree(
     String basePath,
     Map<String, dynamic> results, {
@@ -25,7 +25,7 @@ class FolderTreePrinter {
   }
 
   /// Строит структуру дерева из результатов
-  /// Важное: нормализуем любые встреченные Map в Map<String, dynamic>
+  /// Важное: нормализуем любые встреченные `Map` в `Map<String, dynamic>`.
   static Map<String, dynamic> _buildTree(
     String basePath,
     Map<String, dynamic> results,
@@ -120,8 +120,8 @@ class FolderTreePrinter {
     return tree;
   }
 
-  /// Приводит любую Map к Map<String, dynamic> путём копирования.
-  /// Это защищает от ситуаций, когда на вход приходят Map<String,bool> или другие generic-типы.
+  /// Приводит любую `Map` к `Map<String, dynamic>` путём копирования.
+  /// Это защищает от ситуаций, когда на вход приходят `Map<String, bool>` или другие generic-типы.
   static Map<String, dynamic> _ensureMapStringDynamic(Map existing) {
     try {
       // Попытка безопасного копирования через Map.from

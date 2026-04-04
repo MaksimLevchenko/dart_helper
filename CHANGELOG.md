@@ -1,5 +1,23 @@
 # Changelog
 
+## [2.0.0]
+
+### ✨ Added
+
+- Added executable aliases: `dart-helper` and `dart_helper`.
+- Added short command aliases: `b`, `bs`, `bf`, `c`, and `ga`.
+
+### 📚 Updated
+
+- Updated README to document executable aliases and short command forms.
+- Updated root dependencies and removed `http` in favor of the Dart standard library for version checks.
+
+### 🔧 Changed
+
+- Improved the update notification output with a cleaner, more readable CLI block showing the current version, latest version, and update command.
+
+---
+
 ## [1.5.7]
 
 ### 🐛 Fixed

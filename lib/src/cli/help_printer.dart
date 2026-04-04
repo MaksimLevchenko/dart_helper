@@ -5,11 +5,15 @@ dh - Unified build tool for Dart/Flutter/Serverpod projects
 
 
 Usage:
-  dh build [--fvm] [--force]                   Build Flutter module
-  dh build-server [--fvm] [--force]            Build Serverpod server
-  dh build-full [--fvm] [--force]              Build both frontend and backend
-  dh check [options]                           Analyze project for unused files
-  dh get-all [options]                         Run "dart pub get" in all subprojects
+  dh build|b [--fvm] [--force]                 Build Flutter module
+  dh build-server|bs [--fvm] [--force]         Build Serverpod server
+  dh build-full|bf [--fvm] [--force]           Build both frontend and backend
+  dh check|c [options]                         Analyze project for unused files
+  dh get-all|ga [options]                      Run "dart pub get" in all subprojects
+
+
+Executable Aliases:
+  dh, dart-helper, dart_helper, nit-helper
 
 
 Global Options:
@@ -35,11 +39,15 @@ Get-All Command Options:
 Examples:
   # Build commands
   dh build --fvm
+  dh b --fvm
   dh build-server --force
+  dh bs --force
   dh build-full --fvm --force
+  dh bf --fvm --force
   
   # Check command
   dh check
+  dh c
   dh check --path ./my_project
   dh check --exclude-pattern "*.g.dart" --exclude-pattern "*.freezed.dart"
   dh check --exclude-folder "generated" --exclude-folder "build"
@@ -48,6 +56,7 @@ Examples:
   
   # Get-all command
   dh get-all
+  dh ga
   dh get-all --path ./packages
   dh get-all -p ./my_monorepo --fvm
   dh get-all --interactive --no-tree    # Simple list view with confirmation
