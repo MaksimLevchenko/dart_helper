@@ -159,6 +159,7 @@ Features:
 * Interactive cleanup with confirmation prompts
 * Explicit warnings for unresolved or unreadable files
 * Cross-platform support
+* Used-file line count reporting in the analysis summary
 * Detailed size reporting
 
 ---

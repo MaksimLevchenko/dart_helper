@@ -53,6 +53,7 @@ class CheckCommand {
     print('Scanned root: ${result.projectPath}');
     print('Total files scanned: ${result.totalFiles}');
     print('Files definitely used: ${result.usedFiles}');
+    print('Total lines in used files: ${result.usedLineCount}');
     print('Files definitely unused: ${result.unusedCount}');
     print('============================================================');
 

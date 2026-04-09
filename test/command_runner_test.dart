@@ -66,7 +66,8 @@ void main() {
       expect(buildCommand.lastBuildUseFvm, isFalse);
     });
 
-    test('check command merges configured excludes and uses config defaults', () async {
+    test('check command merges configured excludes and uses config defaults',
+        () async {
       configService.config = const CliConfig(
         checkDetailsByDefault: false,
         checkInteractiveByDefault: true,
@@ -105,7 +106,8 @@ void main() {
       expect(getAllCommand.lastUseFvm, isTrue);
     });
 
-    test('update-checks off skips update service and color off disables ansi', () async {
+    test('update-checks off skips update service and color off disables ansi',
+        () async {
       configService.config = const CliConfig(
         updateChecksEnabled: false,
         colorEnabled: false,
@@ -190,6 +192,7 @@ class _RecordingCheckCommand extends CheckCommand {
       unusedFiles: const [],
       totalFiles: 0,
       usedFiles: 0,
+      usedLineCount: 0,
       totalSizeKb: 0,
       warnings: const [],
       unreadableFiles: const [],

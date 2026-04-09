@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.1.5]
+
+### ✨ Added
+
+- Added used-file line count reporting to the `check` command summary.
+
+### 📚 Updated
+
+- Updated help output and README for the new `check` summary metric.
+
+---
+
 ## [2.1.0]
 
 ### ✨ Added

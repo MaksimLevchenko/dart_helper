@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:analyzer/dart/analysis/utilities.dart';
@@ -13,6 +14,7 @@ class UnusedFileResult {
   final List<String> unusedFiles;
   final int totalFiles;
   final int usedFiles;
+  final int usedLineCount;
   final double totalSizeKb;
   final List<String> warnings;
   final List<String> unreadableFiles;
@@ -22,6 +24,7 @@ class UnusedFileResult {
     required this.unusedFiles,
     required this.totalFiles,
     required this.usedFiles,
+    required this.usedLineCount,
     required this.totalSizeKb,
     required this.warnings,
     required this.unreadableFiles,
@@ -89,6 +92,7 @@ class UnusedFileScanner {
 
     final dependencyMap = <String, Set<String>>{};
     final entryPoints = <String>{};
+    final lineCounts = <String, int>{};
     final unreadableFiles = <String>{};
 
     for (final filePath in dartFiles) {
@@ -97,6 +101,8 @@ class UnusedFileScanner {
         unreadableFiles.add(filePath);
         continue;
       }
+
+      lineCounts[filePath] = _countLines(content);
 
       final unit = parseString(
         content: content,
@@ -132,6 +138,7 @@ class UnusedFileScanner {
             !unreadableFiles.contains(filePath))
         .toList();
 
+    final usedLineCount = _sumLineCounts(usedFiles, lineCounts);
     final totalSize = await _calculateTotalSize(unusedFiles);
 
     return UnusedFileResult(
@@ -139,6 +146,7 @@ class UnusedFileScanner {
       unusedFiles: unusedFiles,
       totalFiles: dartFiles.length,
       usedFiles: usedFiles.length,
+      usedLineCount: usedLineCount,
       totalSizeKb: totalSize / 1024,
       warnings: warnings.toList(),
       unreadableFiles: unreadableFiles.toList(),
@@ -586,6 +594,25 @@ class UnusedFileScanner {
     }
 
     return totalSize;
+  }
+
+  int _countLines(String content) {
+    if (content.isEmpty) {
+      return 0;
+    }
+
+    return const LineSplitter().convert(content).length;
+  }
+
+  int _sumLineCounts(
+    Set<String> files,
+    Map<String, int> lineCounts,
+  ) {
+    var total = 0;
+    for (final filePath in files) {
+      total += lineCounts[filePath] ?? 0;
+    }
+    return total;
   }
 
   bool _shouldExcludeByFolder(String path, List<String> excludeFolders) {

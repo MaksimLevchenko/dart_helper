@@ -86,6 +86,7 @@ Check Command Features:
   • Interactive cleanup with confirmation prompts
   • Explicit warnings for unresolved or unreadable files
   • Cross-platform support (Windows, macOS, Linux)
+  • Used-file line count reporting in the analysis summary
   • Detailed size reporting of unused files
 
 

@@ -199,6 +199,30 @@ test('smoke', () {
         ),
       );
     });
+
+    test('counts lines in used files without rereading them', () async {
+      _writeFile(
+        _path(tempDir, ['app', 'pubspec.yaml']),
+        'name: app\n',
+      );
+      _writeFile(
+        _path(tempDir, ['app', 'lib', 'main.dart']),
+        "import 'helper.dart';\nvoid main() {}\n",
+      );
+      _writeFile(
+        _path(tempDir, ['app', 'lib', 'helper.dart']),
+        'class Helper {}\n',
+      );
+      _writeFile(
+        _path(tempDir, ['app', 'lib', 'unused.dart']),
+        'class Unused {}\n',
+      );
+
+      final result = await scanner.scanProject(projectPath: tempDir.path);
+
+      expect(result.usedFiles, 2);
+      expect(result.usedLineCount, 3);
+    });
   });
 }
 
