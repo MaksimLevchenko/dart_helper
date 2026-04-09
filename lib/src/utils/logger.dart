@@ -1,22 +1,24 @@
+import 'ansi.dart';
+
 class Logger {
   static void info(String message) =>
-      _printWithPrefix('INFO', message, '\x1B[36m'); // Cyan
+      _printWithPrefix('INFO', message, Ansi.cyan);
 
   static void success(String message) =>
-      _printWithPrefix('SUCCESS', message, '\x1B[32m'); // Green
+      _printWithPrefix('SUCCESS', message, Ansi.green);
 
   static void warning(String message) =>
-      _printWithPrefix('WARNING', message, '\x1B[33m'); // Yellow
+      _printWithPrefix('WARNING', message, Ansi.yellow);
 
   static void error(String message) =>
-      _printWithPrefix('ERROR', message, '\x1B[31m'); // Red
+      _printWithPrefix('ERROR', message, Ansi.red);
 
   static void command(String message) =>
-      _printWithPrefix('CMD', message, '\x1B[35m'); // Magenta
+      _printWithPrefix('CMD', message, Ansi.magenta);
 
   static void _printWithPrefix(String prefix, String message, String color) {
     final timestamp = _getTimestamp();
-    print('$color[$timestamp] [$prefix]\x1B[0m $message');
+    print('${Ansi.wrap('[$timestamp] [$prefix]', color)} $message');
   }
 
   static String _getTimestamp() {

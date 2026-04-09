@@ -74,6 +74,7 @@ class UnusedFileScanner {
       analysisRoot,
       onDartFile: (filePath) => dartFiles.add(filePath),
       onPubspecFile: (filePath) => pubspecFiles.add(filePath),
+      excludePatterns: [..._defaultExcludePatterns, ...excludePatterns],
       excludeFolders: [..._defaultExcludeFolders, ...excludeFolders],
       warnings: warnings,
     );
@@ -177,6 +178,7 @@ class UnusedFileScanner {
     Directory directory, {
     required void Function(String filePath) onDartFile,
     required void Function(String filePath) onPubspecFile,
+    required List<String> excludePatterns,
     required List<String> excludeFolders,
     required Set<String> warnings,
   }) async {
@@ -200,6 +202,7 @@ class UnusedFileScanner {
           entity,
           onDartFile: onDartFile,
           onPubspecFile: onPubspecFile,
+          excludePatterns: excludePatterns,
           excludeFolders: excludeFolders,
           warnings: warnings,
         );
@@ -224,9 +227,7 @@ class UnusedFileScanner {
         continue;
       }
 
-      if (_shouldExcludeByPattern(entity.path, [
-        ..._defaultExcludePatterns,
-      ])) {
+      if (_shouldExcludeByPattern(entity.path, excludePatterns)) {
         continue;
       }
 

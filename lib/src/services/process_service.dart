@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import '../utils/ansi.dart';
+
 class ProcessService {
   Future<int> runCommand(
     List<String> cmd, {
@@ -28,7 +30,7 @@ class ProcessService {
     }();
 
     // Фиолетовая строка перед командой (оставляем — полезно)
-    print('\x1B[35mRunning $commandDisplay in $directory\x1B[0m');
+    print(Ansi.wrap('Running $commandDisplay in $directory', Ansi.magenta));
 
     try {
       if (showDetails) {
@@ -85,11 +87,11 @@ class ProcessService {
           final errText = errBuffer.toString().trim();
 
           if (outText.isNotEmpty) {
-            print('\x1B[90m--- OUTPUT ---\x1B[0m');
+            print(Ansi.wrap('--- OUTPUT ---', Ansi.gray));
             print(outText);
           }
           if (errText.isNotEmpty) {
-            print('\x1B[31m--- ERROR ---\x1B[0m');
+            print(Ansi.wrap('--- ERROR ---', Ansi.red));
             print(errText);
           }
         }
@@ -110,7 +112,8 @@ class ProcessService {
 
   Future<void> _handleMissingCommand(List<String> cmd, bool useFvm) async {
     final commandName = cmd.first;
-    print('\n\x1B[31mError: Command "$commandName" not found\x1B[0m');
+    print('');
+    print(Ansi.wrap('Error: Command "$commandName" not found', Ansi.red));
 
     final solutions = <String, String>{
       'fluttergen': 'dart pub global activate flutter_gen',
@@ -126,15 +129,22 @@ class ProcessService {
     };
 
     if (solutions.containsKey(commandName)) {
-      print('\x1B[33mSolution: ${solutions[commandName]}\x1B[0m');
+      print(Ansi.wrap('Solution: ${solutions[commandName]}', Ansi.yellow));
     } else {
-      print(
-          '\x1B[33mSolution: Please install $commandName and ensure it\'s in your PATH\x1B[0m');
+      print(Ansi.wrap(
+        'Solution: Please install $commandName and ensure it\'s in your PATH',
+        Ansi.yellow,
+      ));
     }
 
     if (useFvm && commandName == 'fvm') {
-      print('\n\x1B[36mNote: FVM is required when using --fvm flag\x1B[0m');
-      print('\x1B[36mInstall with: dart pub global activate fvm\x1B[0m');
+      print('');
+      print(
+        Ansi.wrap('Note: FVM is required when using --fvm flag', Ansi.cyan),
+      );
+      print(
+        Ansi.wrap('Install with: dart pub global activate fvm', Ansi.cyan),
+      );
     }
   }
 }

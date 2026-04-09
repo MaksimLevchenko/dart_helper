@@ -1,5 +1,27 @@
 # Changelog
 
+## [2.1.0]
+
+### ✨ Added
+
+- Added a new `config` command for global CLI settings.
+- Added global `fluttergen` enable/disable support via `dh config fluttergen on|off`.
+- Added global config settings for `fvm`, `update-checks`, `check.details`, `check.interactive`, `get-all.tree`, `check.exclude-pattern`, `check.exclude-folder`, and `color`.
+- Added support for list-style config actions: `set`, `add`, `remove`, and `clear`.
+
+### 🔧 Changed
+
+- Global config values now act as defaults when CLI flags are omitted, while explicit flags still take precedence.
+- Added `--no-fvm` support to build and get-all commands, plus explicit negated overrides for interactive and tree-related flags.
+- Centralized ANSI color handling so `dh config color off` disables colored CLI output consistently.
+- CLI now returns the actual process exit code from `bin/main.dart`, including config validation errors.
+
+### 📚 Updated
+
+- Updated help output and README with the expanded `config` keys, precedence rules, and usage examples.
+
+---
+
 ## [2.0.0]
 
 ### ✨ Added

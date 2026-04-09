@@ -15,6 +15,7 @@ The tool automatically detects the necessary directories (`*_flutter`, `*_server
 - 🔧 Commands unified in a single CLI: `dh`  
 - 🗑️ Unused files detection and cleanup
 - 📚 Get-All command for monorepo dependency management with tree-structured output
+- ⚙️ Global CLI configuration for command defaults and output control
 
 ---
 
@@ -63,11 +64,17 @@ With `fvm`:
 ```bash
 dh build --fvm
 dh b --fvm
+dh build --no-fvm
 ```
 
 Executes commands:
 * `dart run build_runner build`
-* `fluttergen`
+* `fluttergen` (if enabled in global config)
+
+Disable `fluttergen` globally:
+```bash
+dh config fluttergen off
+```
 
 ---
 
@@ -90,6 +97,7 @@ With `fvm`:
 ```bash
 dh build-server --fvm
 dh bs --fvm
+dh build-server --no-fvm
 ```
 
 Executes commands:
@@ -174,6 +182,7 @@ With `fvm`:
 ```bash
 dh get-all --path ./packages --fvm
 dh ga --path ./packages --fvm
+dh get-all --no-fvm
 ```
 
 Features:
@@ -205,17 +214,56 @@ All projects processed successfully! 🎉
 
 ---
 
+### ⚙️ `config`
+
+Manages global CLI settings stored per user.
+
+```bash
+dh config
+dh config fvm on
+dh config update-checks off
+dh config check.details off
+dh config check.interactive on
+dh config get-all.tree off
+dh config check.exclude-pattern add "*.gen.dart"
+dh config check.exclude-folder add generated
+dh config color off
+dh config fluttergen off
+dh config fluttergen on
+```
+
+Currently supported settings:
+* `fluttergen` - controls whether `dh build` runs `fluttergen` after `build_runner`
+* `fvm` - default `fvm` behavior for `build`, `build-server`, `build-full`, and `get-all`
+* `update-checks` - enables or disables automatic update checks on startup
+* `check.details` - default detailed output for `dh check`
+* `check.interactive` - default interactive cleanup prompt for `dh check`
+* `get-all.tree` - default tree view for `dh get-all`
+* `check.exclude-pattern` - global extra exclude patterns appended to CLI values
+* `check.exclude-folder` - global extra exclude folders appended to CLI values
+* `color` - enables or disables ANSI-colored output
+
+Config file location:
+* **Windows**: `%APPDATA%\dart_helper\config.json`
+* **macOS/Linux**: `$XDG_CONFIG_HOME/dart_helper/config.json`
+* **Fallback on macOS/Linux**: `$HOME/.config/dart_helper/config.json`
+
+CLI flags always override global config for a single run.
+
+---
+
 ## 🧰 Arguments
 
 | Argument | Command | Description |
 | -------- | ------- | ----------- |
-| `--fvm` | build / b, build-server / bs, build-full / bf, get-all / ga | Execute through `fvm exec` |
+| `--fvm`, `--no-fvm` | build / b, build-server / bs, build-full / bf, get-all / ga | Override the global `fvm` default |
 | `--force` | build-server / bs, build-full / bf | Force create migrations |
 | `--path`, `-p` | check / c, get-all / ga | Path to project directory |
 | `--exclude-pattern`, `-e` | check / c | File patterns to exclude |
 | `--exclude-folder`, `-f` | check / c | Folders to exclude |
-| `--interactive`, `-i` | check / c | Enable interactive cleanup |
-| `--details`, `-d` | check / c | Show detailed file list |
+| `--interactive`, `--no-interactive`, `-i` | check / c, get-all / ga | Override interactive mode |
+| `--details`, `--no-details`, `-d` | check / c | Override detailed file output |
+| `--tree`, `--no-tree`, `-t` | get-all / ga | Override tree view output |
 
 ---
 
@@ -253,6 +301,19 @@ dh ga --path ./packages
 # Get dependencies with FVM
 dh get-all -p ./my_monorepo --fvm
 dh ga -p ./my_monorepo --fvm
+
+# Disable fluttergen globally
+dh config fluttergen off
+
+# Default all supported commands to fvm
+dh config fvm on
+
+# Add global exclusions for dh check
+dh config check.exclude-pattern add "*.gen.dart"
+dh config check.exclude-folder add generated
+
+# Disable colored output
+dh config color off
 ```
 
 ---

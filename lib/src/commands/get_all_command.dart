@@ -1,6 +1,7 @@
 import 'dart:io';
 import '../services/process_service.dart';
 import '../utils/folder_tree_printer.dart';
+import '../utils/ansi.dart';
 
 class GetAllCommand {
   final ProcessService _processService;
@@ -19,13 +20,15 @@ class GetAllCommand {
         path != null && path != '.' ? Directory(path).absolute.path : startDir;
 
     try {
-      print(
-          '\x1B[36m🔍 Searching for Dart/Flutter projects in: $searchDir\x1B[0m');
+      print(Ansi.wrap(
+        '🔍 Searching for Dart/Flutter projects in: $searchDir',
+        Ansi.cyan,
+      ));
 
       final projects = await _findDartProjects(Directory(searchDir));
 
       if (projects.isEmpty) {
-        print('\x1B[33m⚠ No Dart/Flutter projects found\x1B[0m');
+        print(Ansi.wrap('⚠ No Dart/Flutter projects found', Ansi.yellow));
         return 0;
       }
 
@@ -51,10 +54,11 @@ class GetAllCommand {
 
       if (interactive) {
         print(
-            '\n\x1B[33m❓ Continue with processing all projects? (y/N): \x1B[0m');
+          "\n${Ansi.wrap('❓ Continue with processing all projects? (y/N): ', Ansi.yellow)}",
+        );
         final response = stdin.readLineSync()?.toLowerCase() ?? 'n';
         if (response != 'y' && response != 'yes') {
-          print('\x1B[33m⚠ Operation cancelled by user\x1B[0m');
+          print(Ansi.wrap('⚠ Operation cancelled by user', Ansi.yellow));
           return 0;
         }
       }
@@ -92,9 +96,11 @@ class GetAllCommand {
 
         if (treeView) {
           final status = success ? '✅' : '❌';
-          final color = success ? '\x1B[32m' : '\x1B[31m';
-          print(
-              '$color$status [$currentProject/${projects.length}] $projectName\x1B[0m');
+          final color = success ? Ansi.green : Ansi.red;
+          print(Ansi.wrap(
+            '$status [$currentProject/${projects.length}] $projectName',
+            color,
+          ));
         } else {
           FolderTreePrinter.printProgress(
             projectName,
@@ -118,7 +124,7 @@ class GetAllCommand {
       final failCount = projectResults.values.where((v) => !v).length;
       return failCount > 0 ? 1 : 0;
     } catch (e) {
-      print('\x1B[31m❌ Error during get-all execution: $e\x1B[0m');
+      print(Ansi.wrap('❌ Error during get-all execution: $e', Ansi.red));
 
       return 1;
     } finally {
@@ -224,9 +230,11 @@ class GetAllCommand {
 
     if (showDetails) {
       print('');
-      print('\x1B[34m🔄 Processing: $projectName\x1B[0m');
-      print(
-          '\x1B[90m  Path: ${relativePath.isEmpty ? '.' : relativePath}\x1B[0m');
+      print(Ansi.wrap('🔄 Processing: $projectName', Ansi.blue));
+      print(Ansi.wrap(
+        '  Path: ${relativePath.isEmpty ? '.' : relativePath}',
+        Ansi.gray,
+      ));
     }
 
     try {
@@ -243,16 +251,16 @@ class GetAllCommand {
 
       if (showDetails) {
         if (result == 0) {
-          print('\x1B[32m  ✅ Success: $projectName\x1B[0m');
+          print(Ansi.wrap('  ✅ Success: $projectName', Ansi.green));
         } else {
-          print('\x1B[31m  ❌ Failed: $projectName\x1B[0m');
+          print(Ansi.wrap('  ❌ Failed: $projectName', Ansi.red));
         }
       }
 
       return result;
     } catch (e) {
       if (showDetails) {
-        print('\x1B[31m  ❌ Error in $projectName: $e\x1B[0m');
+        print(Ansi.wrap('  ❌ Error in $projectName: $e', Ansi.red));
       }
       return 1;
     }

@@ -1,3 +1,5 @@
+import '../utils/ansi.dart';
+
 class ErrorHandler {
   Future<int> handleErrors(Future<int> Function() action) async {
     try {
@@ -5,15 +7,17 @@ class ErrorHandler {
       // Если команда вернула ненулевой код, это уже обработано в ProcessService
       return result;
     } on ArgumentError catch (e) {
-      print('\x1B[31mError: ${e.message}\x1B[0m');
+      print(Ansi.wrap('Error: ${e.message}', Ansi.red));
       return 1;
     } on Exception catch (e) {
       // Для других исключений выводим чистое сообщение
-      print(
-          '\x1B[31mError: ${e.toString().replaceFirst('Exception: ', '')}\x1B[0m');
+      print(Ansi.wrap(
+        'Error: ${e.toString().replaceFirst('Exception: ', '')}',
+        Ansi.red,
+      ));
       return 1;
     } catch (e) {
-      print('\x1B[31mUnexpected error occurred\x1B[0m');
+      print(Ansi.wrap('Unexpected error occurred', Ansi.red));
       return 1;
     }
   }

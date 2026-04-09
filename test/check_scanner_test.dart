@@ -157,6 +157,48 @@ test('smoke', () {
         isTrue,
       );
     });
+
+    test('applies custom exclude patterns during file discovery', () async {
+      _writeFile(
+        _path(tempDir, ['app', 'pubspec.yaml']),
+        'name: app\n',
+      );
+      _writeFile(
+        _path(tempDir, ['app', 'lib', 'main.dart']),
+        'void main() {}\n',
+      );
+      _writeFile(
+        _path(tempDir, ['app', 'lib', 'unused.gen.dart']),
+        'class GeneratedUnused {}\n',
+      );
+      _writeFile(
+        _path(tempDir, ['app', 'lib', 'unused.dart']),
+        'class Unused {}\n',
+      );
+
+      final result = await scanner.scanProject(
+        projectPath: tempDir.path,
+        excludePatterns: const ['*.gen.dart'],
+      );
+
+      final relativeUnused =
+          result.unusedFiles.map((path) => _relative(path, result.projectPath));
+
+      expect(
+        relativeUnused,
+        isNot(
+          contains(
+            'app${Platform.pathSeparator}lib${Platform.pathSeparator}unused.gen.dart',
+          ),
+        ),
+      );
+      expect(
+        relativeUnused,
+        contains(
+          'app${Platform.pathSeparator}lib${Platform.pathSeparator}unused.dart',
+        ),
+      );
+    });
   });
 }
 

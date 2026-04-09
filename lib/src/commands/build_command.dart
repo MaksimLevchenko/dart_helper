@@ -1,12 +1,14 @@
 import 'dart:io';
 import '../services/process_service.dart';
 import '../services/file_service.dart';
+import '../services/config_service.dart';
 
 class BuildCommand {
   final ProcessService _processService;
   final FileService _fileService;
+  final ConfigService _configService;
 
-  BuildCommand(this._processService, this._fileService);
+  BuildCommand(this._processService, this._fileService, this._configService);
 
   Future<int> executeBuild({required bool force, required bool useFvm}) async {
     return await _executeInFlutterDirectory(() async {
@@ -26,6 +28,15 @@ class BuildCommand {
 
       if (buildResult != 0) {
         return buildResult;
+      }
+
+      final config = await _configService.readConfig();
+      if (!config.fluttergenEnabled) {
+        print(
+          'Skipping fluttergen because it is disabled in global config. '
+          'Use "dh config fluttergen on" to enable it.',
+        );
+        return 0;
       }
 
       final fluttergenResult =

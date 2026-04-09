@@ -1,3 +1,5 @@
+import '../models/cli_config.dart';
+
 class HelpPrinter {
   void printHelp() {
     print('''
@@ -5,11 +7,12 @@ dh - Unified build tool for Dart/Flutter/Serverpod projects
 
 
 Usage:
-  dh build|b [--fvm] [--force]                 Build Flutter module
-  dh build-server|bs [--fvm] [--force]         Build Serverpod server
-  dh build-full|bf [--fvm] [--force]           Build both frontend and backend
+  dh build|b [--fvm|--no-fvm] [--force]        Build Flutter module
+  dh build-server|bs [--fvm|--no-fvm] [--force] Build Serverpod server
+  dh build-full|bf [--fvm|--no-fvm] [--force]  Build both frontend and backend
   dh check|c [options]                         Analyze project for unused files
   dh get-all|ga [options]                      Run "dart pub get" in all subprojects
+  dh config [key] [action]                     Manage global CLI settings
 
 
 Executable Aliases:
@@ -18,6 +21,7 @@ Executable Aliases:
 
 Global Options:
   --fvm    Run commands through "fvm exec"
+  --no-fvm Override the global fvm default for this command
   --force  Force operations (migrations, etc.)
 
 
@@ -26,14 +30,14 @@ Check Command Options:
   -e, --exclude-pattern <pattern>  File patterns to exclude (e.g., "*.g.dart")
   -f, --exclude-folder <folder>    Folders to exclude (e.g., "generated")
   -d, --[no-]details              Show detailed list of unused files (default: on)
-  -i, --interactive                Enable interactive cleanup mode
+  -i, --[no-]interactive           Enable interactive cleanup mode
 
 
 Get-All Command Options:
   -p, --path <directory>           Path to start searching (default: current)
-  --fvm                            Run pub get through "fvm exec"
-  -i, --interactive                Ask for confirmation before processing
-  -t, --[no-]tree                 Display enhanced tree view (default: on)
+  --[no-]fvm                       Run pub get through "fvm exec"
+  -i, --[no-]interactive           Ask for confirmation before processing
+  -t, --[no-]tree                  Display enhanced tree view (default: on)
 
 
 Examples:
@@ -61,6 +65,16 @@ Examples:
   dh get-all -p ./my_monorepo --fvm
   dh get-all --interactive --no-tree    # Simple list view with confirmation
   dh get-all -i -t                      # Tree view with confirmation
+
+  # Config command
+  dh config
+  dh config fvm on
+  dh config update-checks off
+  dh config check.details off
+  dh config check.exclude-pattern add "*.gen.dart"
+  dh config color off
+  dh config fluttergen off
+  dh config fluttergen on
 
 
 Check Command Features:
@@ -96,6 +110,71 @@ Automatically Excluded Folders:
 
 Automatically Excluded Files:
   *.g.dart, *.gr.dart, *.freezed.dart, *.mocks.dart, firebase_options.dart
+''');
+  }
+
+  void printConfigHelp(CliConfig config) {
+    final fluttergenState = config.fluttergenEnabled ? 'on' : 'off';
+    final fvmState = config.useFvmByDefault ? 'on' : 'off';
+    final updateChecksState = config.updateChecksEnabled ? 'on' : 'off';
+    final checkDetailsState = config.checkDetailsByDefault ? 'on' : 'off';
+    final checkInteractiveState =
+        config.checkInteractiveByDefault ? 'on' : 'off';
+    final getAllTreeState = config.getAllTreeByDefault ? 'on' : 'off';
+    final colorState = config.colorEnabled ? 'on' : 'off';
+    final excludePatterns = config.checkExcludePatterns.isEmpty
+        ? '(empty)'
+        : config.checkExcludePatterns.join(', ');
+    final excludeFolders = config.checkExcludeFolders.isEmpty
+        ? '(empty)'
+        : config.checkExcludeFolders.join(', ');
+
+    print('''
+Config command
+
+Current settings:
+  fluttergen: $fluttergenState
+  fvm: $fvmState
+  update-checks: $updateChecksState
+  check.details: $checkDetailsState
+  check.interactive: $checkInteractiveState
+  get-all.tree: $getAllTreeState
+  check.exclude-pattern: $excludePatterns
+  check.exclude-folder: $excludeFolders
+  color: $colorState
+
+Usage:
+  dh config
+  dh config <key>
+  dh config <boolean-key> on|off
+  dh config <list-key> set <value>...
+  dh config <list-key> add <value>...
+  dh config <list-key> remove <value>...
+  dh config <list-key> clear
+
+Description:
+  Controls global CLI settings stored per user.
+  Explicit CLI flags override config values for a single command run.
+''');
+  }
+
+  void printConfigSettingHelp({
+    required String key,
+    required String currentValue,
+    required String description,
+    required List<String> usage,
+  }) {
+    print('''
+Config setting: $key
+
+Current value:
+  $currentValue
+
+Description:
+  $description
+
+Usage:
+  ${usage.join('\n  ')}
 ''');
   }
 }

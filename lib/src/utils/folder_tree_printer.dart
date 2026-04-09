@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'ansi.dart';
+
 /// Утилита для красивого отображения дерева папок в CLI
 class FolderTreePrinter {
   static const String _folderProcessed = '✅';
@@ -176,19 +178,20 @@ class FolderTreePrinter {
       String displayName = key;
       String color = '';
       String resetColor = '';
+      final useColor = colorOutput && Ansi.enabled;
 
-      if (colorOutput) resetColor = '\x1B[0m';
+      if (useColor) resetColor = Ansi.reset;
 
       if (isProject) {
         final success = (value['__result'] as bool?) ?? false;
         icon = showStatus
             ? (success ? _folderProcessed : _folderUnprocessed)
             : _folderIcon;
-        if (colorOutput) color = success ? '\x1B[32m' : '\x1B[31m';
+        if (useColor) color = success ? Ansi.green : Ansi.red;
       } else {
         icon = _folderIcon;
         displayName = '$key/';
-        if (colorOutput) color = '\x1B[34m';
+        if (useColor) color = Ansi.blue;
       }
 
       print('$prefix$connector$color$icon $displayName$resetColor');
@@ -223,14 +226,14 @@ class FolderTreePrinter {
     final successful = results.values.where((v) => v == true).length;
     final failed = total - successful;
 
-    if (failed > 0) print('\x1B[31m❌ Failed: $failed\x1B[0m');
+    if (failed > 0) print(Ansi.wrap('❌ Failed: $failed', Ansi.red));
 
     print('');
     final percentage = total > 0 ? (successful * 100 / total).round() : 0;
     print('Success rate: $percentage%');
 
     if (failed == 0) {
-      print('\x1B[32m🎉 All projects processed successfully!\x1B[0m');
+      print(Ansi.wrap('🎉 All projects processed successfully!', Ansi.green));
     }
   }
 
@@ -240,7 +243,7 @@ class FolderTreePrinter {
     final progressBar = _createProgressBar(current, total);
     final status = success ? '✅' : '❌';
     print(
-        '\r\x1B[K$status [$current/$total] $progressBar $percentage% - $projectName');
+        '\r${Ansi.sequence(Ansi.clearLine)}$status [$current/$total] $progressBar $percentage% - $projectName');
   }
 
   static String _createProgressBar(int current, int total, {int width = 20}) {
@@ -252,12 +255,12 @@ class FolderTreePrinter {
 
   static void printSectionHeader(String title, {String emoji = '📋'}) {
     print('');
-    print('\x1B[36m$emoji $title\x1B[0m');
-    print('\x1B[36m${'─' * (title.length + 3)}\x1B[0m');
+    print(Ansi.wrap('$emoji $title', Ansi.cyan));
+    print(Ansi.wrap('─' * (title.length + 3), Ansi.cyan));
   }
 
   static void printFoundProjects(List<String> projects, String basePath) {
-    print('\x1B[32m📁 Found ${projects.length} projects:\x1B[0m');
+    print(Ansi.wrap('📁 Found ${projects.length} projects:', Ansi.green));
     for (int i = 0; i < projects.length; i++) {
       final project = projects[i];
       final relativePath = _getRelativePath(project, basePath);

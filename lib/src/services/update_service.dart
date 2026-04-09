@@ -1,15 +1,9 @@
 import '../models/version.dart';
 import 'http_client.dart';
 import '../generated/version.g.dart';
+import '../utils/ansi.dart';
 
 class UpdateService {
-  static const String _reset = '\x1B[0m';
-  static const String _titleColor = '\x1B[1;33m';
-  static const String _borderColor = '\x1B[33m';
-  static const String _labelColor = '\x1B[36m';
-  static const String _currentColor = '\x1B[37m';
-  static const String _latestColor = '\x1B[32m';
-  static const String _commandColor = '\x1B[35m';
   static const String _packageName = 'dart_helper_cli';
   static const String _updateCommand =
       'dart pub global activate dart_helper_cli';
@@ -54,19 +48,19 @@ class UpdateService {
     final lines = [
       _formatLine(
         label: 'Package',
-        value: '$_titleColor$_packageName$_reset',
+        value: Ansi.wrap(_packageName, Ansi.boldYellow),
       ),
       _formatLine(
         label: 'Current',
-        value: '$_currentColor$currentVersion$_reset',
+        value: Ansi.wrap('$currentVersion', Ansi.white),
       ),
       _formatLine(
         label: 'Latest',
-        value: '$_latestColor$latestVersion$_reset',
+        value: Ansi.wrap('$latestVersion', Ansi.green),
       ),
       _formatLine(
         label: 'Update',
-        value: '$_commandColor$_updateCommand$_reset',
+        value: Ansi.wrap(_updateCommand, Ansi.magenta),
       ),
     ];
 
@@ -77,13 +71,15 @@ class UpdateService {
     final title = '| ${_padVisible('Update available', visibleWidth)} |';
 
     print('');
-    print('$_borderColor$border$_reset');
-    print('$_titleColor$title$_reset');
-    print('$_borderColor$border$_reset');
+    print(Ansi.wrap(border, Ansi.yellow));
+    print(Ansi.wrap(title, Ansi.boldYellow));
+    print(Ansi.wrap(border, Ansi.yellow));
     for (final line in lines) {
-      print('$_borderColor|$_reset ${_padVisible(line, visibleWidth)} $_borderColor|$_reset');
+      final leftBorder = Ansi.wrap('|', Ansi.yellow);
+      final rightBorder = Ansi.wrap('|', Ansi.yellow);
+      print('$leftBorder ${_padVisible(line, visibleWidth)} $rightBorder');
     }
-    print('$_borderColor$border$_reset');
+    print(Ansi.wrap(border, Ansi.yellow));
     print('');
   }
 
@@ -91,11 +87,11 @@ class UpdateService {
     required String label,
     required String value,
   }) {
-    return '$_labelColor${label.padRight(7)}$_reset $value';
+    return '${Ansi.wrap(label.padRight(7), Ansi.cyan)} $value';
   }
 
   int _visibleLength(String value) {
-    return value.replaceAll(RegExp(r'\x1B\[[0-9;]*m'), '').length;
+    return Ansi.strip(value).length;
   }
 
   String _padVisible(String value, int width) {
