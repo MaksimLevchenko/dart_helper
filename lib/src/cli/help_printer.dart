@@ -10,6 +10,7 @@ Usage:
   dh build|b [--fvm|--no-fvm] [--force]        Build Flutter module
   dh build-server|bs [--fvm|--no-fvm] [--force] Build Serverpod server
   dh build-full|bf [--fvm|--no-fvm] [--force]  Build both frontend and backend
+  dh reverse|r                                  Run adb reverse for configured ports
   dh check|c [options]                         Analyze project for unused files
   dh get-all|ga [options]                      Run "dart pub get" in all subprojects
   dh config [key] [action]                     Manage global CLI settings
@@ -48,6 +49,10 @@ Examples:
   dh bs --force
   dh build-full --fvm --force
   dh bf --fvm --force
+
+  # Reverse command
+  dh reverse
+  dh r
   
   # Check command
   dh check
@@ -72,6 +77,7 @@ Examples:
   dh config update-checks off
   dh config check.details off
   dh config check.exclude-pattern add "*.gen.dart"
+  dh config reverse.ports add 8093
   dh config color off
   dh config fluttergen off
   dh config fluttergen on
@@ -142,6 +148,7 @@ Current settings:
   get-all.tree: $getAllTreeState
   check.exclude-pattern: $excludePatterns
   check.exclude-folder: $excludeFolders
+  reverse.ports: ${_formatIntList(config.reversePorts)}
   color: $colorState
 
 Usage:
@@ -153,7 +160,7 @@ Usage:
   dh config <list-key> remove <value>...
   dh config <list-key> clear
 
-Description:
+  Description:
   Controls global CLI settings stored per user.
   Explicit CLI flags override config values for a single command run.
 ''');
@@ -177,5 +184,12 @@ Description:
 Usage:
   ${usage.join('\n  ')}
 ''');
+  }
+
+  String _formatIntList(List<int> values) {
+    if (values.isEmpty) {
+      return '(empty)';
+    }
+    return values.join(', ');
   }
 }

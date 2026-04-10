@@ -1,2 +1,2 @@
 // Generated file. Do not edit.
-const appVersion = '2.1.5';
+const appVersion = '2.2.0';

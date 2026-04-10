@@ -52,6 +52,42 @@ void main() {
       expect(config.checkExcludePatterns, isEmpty);
     });
 
+    test('supports set add remove and clear for reverse ports', () async {
+      await command.execute(
+        args: ['reverse.ports', 'set', '8080', '8081', '8082'],
+      );
+      var config = await configService.readConfig();
+      expect(config.reversePorts, [8080, 8081, 8082]);
+
+      await command.execute(
+        args: ['reverse.ports', 'add', '8090', '8080'],
+      );
+      config = await configService.readConfig();
+      expect(config.reversePorts, [8080, 8081, 8082, 8090]);
+
+      await command.execute(
+        args: ['reverse.ports', 'remove', '8081'],
+      );
+      config = await configService.readConfig();
+      expect(config.reversePorts, [8080, 8082, 8090]);
+
+      await command.execute(args: ['reverse.ports', 'clear']);
+      config = await configService.readConfig();
+      expect(config.reversePorts, isEmpty);
+    });
+
+    test('throws for invalid reverse port values', () async {
+      expect(
+        command.execute(args: ['reverse.ports', 'set', 'abc']),
+        throwsArgumentError,
+      );
+
+      expect(
+        command.execute(args: ['reverse.ports', 'add', '70000']),
+        throwsArgumentError,
+      );
+    });
+
     test('throws for invalid list action', () async {
       expect(
         command.execute(args: ['check.exclude-folder', 'replace', 'build']),

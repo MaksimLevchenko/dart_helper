@@ -29,6 +29,7 @@ void main() {
       expect(config.useFvmByDefault, isFalse);
       expect(config.updateChecksEnabled, isTrue);
       expect(config.checkExcludePatterns, isEmpty);
+      expect(config.reversePorts, CliConfig.defaultReversePorts);
       expect(config.colorEnabled, isTrue);
     });
 
@@ -42,6 +43,7 @@ void main() {
         getAllTreeByDefault: false,
         checkExcludePatterns: const ['*.g.dart', '*.freezed.dart'],
         checkExcludeFolders: const ['generated', 'build'],
+        reversePorts: const [8080, 8090, 8092],
         colorEnabled: false,
       );
 
@@ -59,12 +61,20 @@ void main() {
       expect(actual.getAllTreeByDefault, expected.getAllTreeByDefault);
       expect(actual.checkExcludePatterns, expected.checkExcludePatterns);
       expect(actual.checkExcludeFolders, expected.checkExcludeFolders);
+      expect(actual.reversePorts, expected.reversePorts);
       expect(actual.colorEnabled, expected.colorEnabled);
     });
 
-    test('throws for invalid config values', () async {
+    test('throws for invalid color config values', () async {
       configFile.createSync(recursive: true);
       configFile.writeAsStringSync('{"color":"auto"}');
+
+      expect(service.readConfig(), throwsFormatException);
+    });
+
+    test('throws for invalid reverse port config values', () async {
+      configFile.createSync(recursive: true);
+      configFile.writeAsStringSync('{"reversePorts":[8080,70000]}');
 
       expect(service.readConfig(), throwsFormatException);
     });

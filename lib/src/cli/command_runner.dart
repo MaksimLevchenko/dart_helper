@@ -1,5 +1,6 @@
 import 'package:args/args.dart';
 import 'package:dart_helper_cli/src/commands/get_all_command.dart';
+import 'package:dart_helper_cli/src/commands/reverse_command.dart';
 import '../models/cli_config.dart';
 import '../commands/config_command.dart';
 import '../commands/build_command.dart';
@@ -21,6 +22,8 @@ class CommandRunner {
     'bs': 'build-server',
     'build-full': 'build-full',
     'bf': 'build-full',
+    'reverse': 'reverse',
+    'r': 'reverse',
     'check': 'check',
     'c': 'check',
     'get-all': 'get-all',
@@ -31,6 +34,7 @@ class CommandRunner {
   final BuildCommand _buildCommand;
   final CheckCommand _checkCommand;
   final GetAllCommand _getAllCommand;
+  final ReverseCommand _reverseCommand;
   final ConfigCommand _configCommand;
   final ConfigService _configService;
   final UpdateService _updateService;
@@ -42,6 +46,7 @@ class CommandRunner {
     required CheckCommand checkCommand,
     required UpdateService updateService,
     required GetAllCommand getAllCommand,
+    required ReverseCommand reverseCommand,
     required ConfigCommand configCommand,
     required ConfigService configService,
     required HelpPrinter helpPrinter,
@@ -50,6 +55,7 @@ class CommandRunner {
         _checkCommand = checkCommand,
         _updateService = updateService,
         _getAllCommand = getAllCommand,
+        _reverseCommand = reverseCommand,
         _configCommand = configCommand,
         _configService = configService,
         _helpPrinter = helpPrinter,
@@ -81,6 +87,8 @@ class CommandRunner {
       ..addCommand('bs', _buildBuildParser())
       ..addCommand('build-full', _buildBuildParser())
       ..addCommand('bf', _buildBuildParser())
+      ..addCommand('reverse', _buildReverseParser())
+      ..addCommand('r', _buildReverseParser())
       ..addCommand('get-all', _buildGetAllParser())
       ..addCommand('ga', _buildGetAllParser())
       ..addCommand('check', _buildCheckParser())
@@ -154,6 +162,10 @@ class CommandRunner {
     return ArgParser();
   }
 
+  ArgParser _buildReverseParser() {
+    return ArgParser();
+  }
+
   ParsedCommand _parseCommand(ArgParser parser, List<String> args) {
     try {
       final result = parser.parse(args);
@@ -202,6 +214,8 @@ class CommandRunner {
         getAllTreeView = _maybeParsedFlag(commandArgs, 'tree');
       }
 
+      List<int>? reversePorts;
+
       List<String> configArgs = const [];
       if (commandName == 'config') {
         configArgs = commandArgs?.rest ?? result.rest;
@@ -220,6 +234,7 @@ class CommandRunner {
         getAllUseFvm: getAllUseFvm,
         getAllInteractive: getAllInteractive,
         getAllTreeView: getAllTreeView,
+        reversePorts: reversePorts,
         configArgs: configArgs,
       );
     } catch (e) {
@@ -256,6 +271,7 @@ class CommandRunner {
       getAllUseFvm: command.getAllUseFvm ?? config.useFvmByDefault,
       getAllInteractive: command.getAllInteractive ?? false,
       getAllTreeView: command.getAllTreeView ?? config.getAllTreeByDefault,
+      reversePorts: command.reversePorts ?? config.reversePorts,
       configArgs: command.configArgs,
     );
   }
@@ -317,6 +333,10 @@ class CommandRunner {
           interactive: command.getAllInteractive ?? false,
           treeView: command.getAllTreeView ?? true,
         );
+      case 'reverse':
+        return await _reverseCommand.execute(
+          ports: command.reversePorts ?? const [],
+        );
       case 'config':
         return await _configCommand.execute(
           args: command.configArgs,
@@ -351,6 +371,7 @@ class ParsedCommand {
   final bool? getAllUseFvm;
   final bool? getAllInteractive;
   final bool? getAllTreeView;
+  final List<int>? reversePorts;
 
   final List<String> configArgs;
 
@@ -367,6 +388,7 @@ class ParsedCommand {
     this.getAllUseFvm,
     this.getAllInteractive,
     this.getAllTreeView,
+    this.reversePorts,
     this.configArgs = const [],
   });
 }
@@ -378,6 +400,7 @@ CommandRunner createCommandRunner() {
   final buildCommand = BuildCommand(processService, fileService, configService);
   final checkCommand = CheckCommand();
   final getAllCommand = GetAllCommand(processService);
+  final reverseCommand = ReverseCommand(processService);
   final helpPrinter = HelpPrinter();
   final configCommand = ConfigCommand(configService, helpPrinter);
   final httpClient = HttpClient();
@@ -389,6 +412,7 @@ CommandRunner createCommandRunner() {
     checkCommand: checkCommand,
     updateService: updateService,
     getAllCommand: getAllCommand,
+    reverseCommand: reverseCommand,
     configCommand: configCommand,
     configService: configService,
     helpPrinter: helpPrinter,

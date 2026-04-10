@@ -34,6 +34,8 @@ class ConfigCommand {
       case 'check.exclude-pattern':
       case 'check.exclude-folder':
         return _handleListSetting(config, setting, values);
+      case 'reverse.ports':
+        return _handlePortListSetting(config, setting, values);
       default:
         throw ArgumentError(
           'Unknown config setting: $setting. '
@@ -171,6 +173,90 @@ class ConfigCommand {
     }
   }
 
+  Future<int> _handlePortListSetting(
+    CliConfig config,
+    String setting,
+    List<String> values,
+  ) async {
+    if (values.isEmpty) {
+      _helpPrinter.printConfigSettingHelp(
+        key: setting,
+        currentValue: _formatIntListValue(_portSettingValue(config, setting)),
+        description: _settingDescription(setting),
+        usage: [
+          'dh config $setting set <port>...',
+          'dh config $setting add <port>...',
+          'dh config $setting remove <port>...',
+          'dh config $setting clear',
+        ],
+      );
+      return 0;
+    }
+
+    final action = values.first;
+    final items = values.skip(1).toList();
+
+    switch (action) {
+      case 'set':
+        if (items.isEmpty) {
+          throw ArgumentError(
+            'Usage: dh config $setting set <port>...',
+          );
+        }
+        await _configService.updateConfig(
+          (current) => _setPortSetting(current, setting, _parsePorts(items)),
+        );
+        print('$setting list updated.');
+        return 0;
+      case 'add':
+        if (items.isEmpty) {
+          throw ArgumentError(
+            'Usage: dh config $setting add <port>...',
+          );
+        }
+        await _configService.updateConfig((current) {
+          final merged = [
+            ..._portSettingValue(current, setting),
+            ..._parsePorts(items),
+          ];
+          return _setPortSetting(current, setting, _uniqueInts(merged));
+        });
+        print('Added values to $setting.');
+        return 0;
+      case 'remove':
+        if (items.isEmpty) {
+          throw ArgumentError(
+            'Usage: dh config $setting remove <port>...',
+          );
+        }
+        await _configService.updateConfig((current) {
+          final itemsToRemove = _parsePorts(items).toSet();
+          final remaining = _portSettingValue(current, setting)
+              .where((item) => !itemsToRemove.contains(item))
+              .toList();
+          return _setPortSetting(current, setting, remaining);
+        });
+        print('Removed values from $setting.');
+        return 0;
+      case 'clear':
+        if (items.isNotEmpty) {
+          throw ArgumentError(
+            'Usage: dh config $setting clear',
+          );
+        }
+        await _configService.updateConfig(
+          (current) => _setPortSetting(current, setting, const []),
+        );
+        print('$setting list cleared.');
+        return 0;
+      default:
+        throw ArgumentError(
+          'Invalid action for $setting: $action. '
+          'Use set, add, remove, or clear.',
+        );
+    }
+  }
+
   bool _boolSettingValue(CliConfig config, String setting) {
     switch (setting) {
       case 'fluttergen':
@@ -224,6 +310,15 @@ class ConfigCommand {
     }
   }
 
+  List<int> _portSettingValue(CliConfig config, String setting) {
+    switch (setting) {
+      case 'reverse.ports':
+        return List<int>.from(config.reversePorts);
+      default:
+        throw ArgumentError('Unsupported port list setting: $setting');
+    }
+  }
+
   CliConfig _setListSetting(
     CliConfig config,
     String setting,
@@ -236,6 +331,19 @@ class ConfigCommand {
         return config.copyWith(checkExcludeFolders: values);
       default:
         throw ArgumentError('Unsupported list setting: $setting');
+    }
+  }
+
+  CliConfig _setPortSetting(
+    CliConfig config,
+    String setting,
+    List<int> values,
+  ) {
+    switch (setting) {
+      case 'reverse.ports':
+        return config.copyWith(reversePorts: values);
+      default:
+        throw ArgumentError('Unsupported port list setting: $setting');
     }
   }
 
@@ -257,6 +365,8 @@ class ConfigCommand {
         return 'Global file patterns appended to the "dh check" exclude-pattern list.';
       case 'check.exclude-folder':
         return 'Global folders appended to the "dh check" exclude-folder list.';
+      case 'reverse.ports':
+        return 'Ports used by "dh reverse" for sequential adb reverse commands.';
       case 'color':
         return 'Controls ANSI-colored CLI output.';
       default:
@@ -271,7 +381,37 @@ class ConfigCommand {
     return values.join(', ');
   }
 
+  String _formatIntListValue(List<int> values) {
+    if (values.isEmpty) {
+      return '(empty)';
+    }
+    return values.join(', ');
+  }
+
+  List<int> _parsePorts(List<String> values) {
+    final ports = <int>[];
+    for (final value in values) {
+      final port = int.tryParse(value);
+      if (port == null) {
+        throw ArgumentError(
+          'Invalid port for reverse.ports: $value. Use integers from 1 to 65535.',
+        );
+      }
+      if (port < 1 || port > 65535) {
+        throw ArgumentError(
+          'Invalid port for reverse.ports: $value. Use integers from 1 to 65535.',
+        );
+      }
+      ports.add(port);
+    }
+    return _uniqueInts(ports);
+  }
+
   List<String> _unique(Iterable<String> values) {
     return LinkedHashSet<String>.from(values).toList();
+  }
+
+  List<int> _uniqueInts(Iterable<int> values) {
+    return LinkedHashSet<int>.from(values).toList();
   }
 }

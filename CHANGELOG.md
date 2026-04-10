@@ -1,5 +1,18 @@
 # Changelog
 
+## [2.2.0]
+
+### ✨ Added
+
+- Added `reverse` / `r` to run sequential `adb reverse` commands for configured Serverpod ports.
+- Added global `reverse.ports` config with `set`, `add`, `remove`, and `clear` actions.
+
+### 📚 Updated
+
+- Updated help output and README to document `dh reverse` and `reverse.ports`.
+
+---
+
 ## [2.1.5]
 
 ### ✨ Added

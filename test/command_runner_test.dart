@@ -7,6 +7,7 @@ import 'package:dart_helper_cli/src/commands/build_command.dart';
 import 'package:dart_helper_cli/src/commands/check_command.dart';
 import 'package:dart_helper_cli/src/commands/config_command.dart';
 import 'package:dart_helper_cli/src/commands/get_all_command.dart';
+import 'package:dart_helper_cli/src/commands/reverse_command.dart';
 import 'package:dart_helper_cli/src/models/cli_config.dart';
 import 'package:dart_helper_cli/src/services/config_service.dart';
 import 'package:dart_helper_cli/src/services/file_service.dart';
@@ -21,6 +22,7 @@ void main() {
     late _RecordingBuildCommand buildCommand;
     late _RecordingCheckCommand checkCommand;
     late _RecordingGetAllCommand getAllCommand;
+    late _RecordingReverseCommand reverseCommand;
     late _RecordingUpdateService updateService;
     late _StaticConfigService configService;
     late CommandRunner runner;
@@ -29,6 +31,7 @@ void main() {
       buildCommand = _RecordingBuildCommand();
       checkCommand = _RecordingCheckCommand();
       getAllCommand = _RecordingGetAllCommand();
+      reverseCommand = _RecordingReverseCommand();
       updateService = _RecordingUpdateService();
       configService = _StaticConfigService(const CliConfig());
       runner = CommandRunner(
@@ -36,6 +39,7 @@ void main() {
         checkCommand: checkCommand,
         updateService: updateService,
         getAllCommand: getAllCommand,
+        reverseCommand: reverseCommand,
         configCommand: ConfigCommand(configService, HelpPrinter()),
         configService: configService,
         helpPrinter: HelpPrinter(),
@@ -104,6 +108,28 @@ void main() {
       expect(exitCode, 0);
       expect(getAllCommand.lastTreeView, isFalse);
       expect(getAllCommand.lastUseFvm, isTrue);
+    });
+
+    test('reverse uses ports from config', () async {
+      configService.config = const CliConfig(
+        reversePorts: [8080, 8092],
+      );
+
+      final exitCode = await runner.run(['reverse']);
+
+      expect(exitCode, 0);
+      expect(reverseCommand.lastPorts, [8080, 8092]);
+    });
+
+    test('reverse alias routes to the same command', () async {
+      configService.config = const CliConfig(
+        reversePorts: [9000],
+      );
+
+      final exitCode = await runner.run(['r']);
+
+      expect(exitCode, 0);
+      expect(reverseCommand.lastPorts, [9000]);
     });
 
     test('update-checks off skips update service and color off disables ansi',
@@ -222,6 +248,20 @@ class _RecordingGetAllCommand extends GetAllCommand {
     lastUseFvm = useFvm;
     lastInteractive = interactive;
     lastTreeView = treeView;
+    return 0;
+  }
+}
+
+class _RecordingReverseCommand extends ReverseCommand {
+  List<int>? lastPorts;
+
+  _RecordingReverseCommand() : super(ProcessService());
+
+  @override
+  Future<int> execute({
+    required List<int> ports,
+  }) async {
+    lastPorts = ports;
     return 0;
   }
 }

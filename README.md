@@ -11,6 +11,7 @@ The tool automatically detects the necessary directories (`*_flutter`, `*_server
 - 📦 Automatic Flutter module building  
 - 🛠 Code generation and migrations for Serverpod  
 - 🔁 Support for `fvm` (Flutter Version Management)  
+- 🔌 Serverpod-friendly `adb reverse` command with configurable ports  
 - 🧠 Smart project structure navigation  
 - 🔧 Commands unified in a single CLI: `dh`  
 - 🗑️ Unused files detection and cleanup
@@ -124,6 +125,33 @@ dh bf --fvm --force
 
 ---
 
+### 🔌 `reverse` / `r`
+
+Runs `adb reverse tcp:<port> tcp:<port>` sequentially for the configured port list.
+
+```bash
+dh reverse
+dh r
+```
+
+Default ports:
+* `8080` through `8092`
+
+Customize the global port list:
+```bash
+dh config reverse.ports set 8080 8081 8082
+dh config reverse.ports add 8093
+dh config reverse.ports remove 8081
+dh config reverse.ports clear
+```
+
+Notes:
+* Ports are executed in the order stored in config
+* If one port fails, the command still attempts the rest
+* `adb` must be available in your `PATH`
+
+---
+
 ### 🔍 `check` / `c`
 
 Analyzes the project for unused Dart files and provides cleanup options.
@@ -228,6 +256,7 @@ dh config check.interactive on
 dh config get-all.tree off
 dh config check.exclude-pattern add "*.gen.dart"
 dh config check.exclude-folder add generated
+dh config reverse.ports add 8093
 dh config color off
 dh config fluttergen off
 dh config fluttergen on
@@ -242,6 +271,7 @@ Currently supported settings:
 * `get-all.tree` - default tree view for `dh get-all`
 * `check.exclude-pattern` - global extra exclude patterns appended to CLI values
 * `check.exclude-folder` - global extra exclude folders appended to CLI values
+* `reverse.ports` - ports used by `dh reverse` for sequential `adb reverse` commands
 * `color` - enables or disables ANSI-colored output
 
 Config file location:
@@ -283,6 +313,10 @@ dh bs --force
 dh build-full --fvm --force
 dh bf --fvm --force
 
+# Reverse configured Serverpod ports
+dh reverse
+dh r
+
 # Check for unused files
 dh check
 dh c
@@ -312,6 +346,9 @@ dh config fvm on
 # Add global exclusions for dh check
 dh config check.exclude-pattern add "*.gen.dart"
 dh config check.exclude-folder add generated
+
+# Add another reverse port
+dh config reverse.ports add 8093
 
 # Disable colored output
 dh config color off

@@ -1,4 +1,20 @@
 class CliConfig {
+  static const List<int> defaultReversePorts = [
+    8080,
+    8081,
+    8082,
+    8083,
+    8084,
+    8085,
+    8086,
+    8087,
+    8088,
+    8089,
+    8090,
+    8091,
+    8092,
+  ];
+
   final bool fluttergenEnabled;
   final bool useFvmByDefault;
   final bool updateChecksEnabled;
@@ -7,6 +23,7 @@ class CliConfig {
   final bool getAllTreeByDefault;
   final List<String> checkExcludePatterns;
   final List<String> checkExcludeFolders;
+  final List<int> reversePorts;
   final bool colorEnabled;
 
   const CliConfig({
@@ -18,6 +35,7 @@ class CliConfig {
     this.getAllTreeByDefault = true,
     this.checkExcludePatterns = const [],
     this.checkExcludeFolders = const [],
+    this.reversePorts = defaultReversePorts,
     this.colorEnabled = true,
   });
 
@@ -34,6 +52,7 @@ class CliConfig {
           _readStringList(json, 'checkExcludePatterns', const []),
       checkExcludeFolders:
           _readStringList(json, 'checkExcludeFolders', const []),
+      reversePorts: _readPortList(json, 'reversePorts', defaultReversePorts),
       colorEnabled: _readColorEnabled(json),
     );
   }
@@ -48,6 +67,7 @@ class CliConfig {
       'getAllTreeByDefault': getAllTreeByDefault,
       'checkExcludePatterns': checkExcludePatterns,
       'checkExcludeFolders': checkExcludeFolders,
+      'reversePorts': reversePorts,
       'color': colorEnabled ? 'on' : 'off',
     };
   }
@@ -61,6 +81,7 @@ class CliConfig {
     bool? getAllTreeByDefault,
     List<String>? checkExcludePatterns,
     List<String>? checkExcludeFolders,
+    List<int>? reversePorts,
     bool? colorEnabled,
   }) {
     return CliConfig(
@@ -76,6 +97,7 @@ class CliConfig {
           checkExcludePatterns ?? List<String>.from(this.checkExcludePatterns),
       checkExcludeFolders:
           checkExcludeFolders ?? List<String>.from(this.checkExcludeFolders),
+      reversePorts: reversePorts ?? List<int>.from(this.reversePorts),
       colorEnabled: colorEnabled ?? this.colorEnabled,
     );
   }
@@ -115,6 +137,37 @@ class CliConfig {
     throw FormatException('Invalid value for "$key": expected a list.');
   }
 
+  static List<int> _readPortList(
+    Map<String, dynamic> json,
+    String key,
+    List<int> defaultValue,
+  ) {
+    final value = json[key];
+    if (value == null) {
+      return defaultValue;
+    }
+    if (value is! List) {
+      throw FormatException('Invalid value for "$key": expected a list.');
+    }
+
+    final ports = <int>[];
+    for (final item in value) {
+      if (item is! int) {
+        throw FormatException(
+          'Invalid value for "$key": expected a list of integer ports.',
+        );
+      }
+      if (item < 1 || item > 65535) {
+        throw FormatException(
+          'Invalid value for "$key": port $item is out of range.',
+        );
+      }
+      ports.add(item);
+    }
+
+    return ports;
+  }
+
   static bool _readColorEnabled(Map<String, dynamic> json) {
     final value = json['color'];
     if (value == null) {
@@ -126,6 +179,7 @@ class CliConfig {
     if (value == 'off') {
       return false;
     }
-    throw const FormatException('Invalid value for "color": use "on" or "off".');
+    throw const FormatException(
+        'Invalid value for "color": use "on" or "off".');
   }
 }

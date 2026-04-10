@@ -8,7 +8,8 @@ class ProcessService {
   Future<int> runCommand(
     List<String> cmd, {
     required bool useFvm,
-    bool showDetails = true, // <- new param
+    bool showDetails = true,
+    bool announceCommand = true,
   }) async {
     if (useFvm) {
       cmd = ['fvm', 'exec', ...cmd];
@@ -29,8 +30,9 @@ class ProcessService {
       return displayCmd.join(' ');
     }();
 
-    // Фиолетовая строка перед командой (оставляем — полезно)
-    print(Ansi.wrap('Running $commandDisplay in $directory', Ansi.magenta));
+    if (announceCommand) {
+      print(Ansi.wrap('Running $commandDisplay in $directory', Ansi.magenta));
+    }
 
     try {
       if (showDetails) {
