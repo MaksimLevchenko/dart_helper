@@ -1,5 +1,19 @@
 # Changelog
 
+## [2.2.1]
+
+### 🔧 Changed
+
+- Refactored the `check`, `config`, and `get-all` command internals into smaller feature-local modules.
+- Refactored tree rendering utilities into smaller internal components while preserving the public CLI behavior.
+- Improved global CLI help handling so `dh`, `dh --help`, and `dh -h` show the same help output.
+
+### ✅ Tested
+
+- Added focused tests for command parsing defaults, `get-all` behavior, folder tree rendering, and global help flow.
+
+---
+
 ## [2.2.0]
 
 ### ✨ Added

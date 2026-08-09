@@ -25,6 +25,7 @@ void main() {
     late _RecordingReverseCommand reverseCommand;
     late _RecordingUpdateService updateService;
     late _StaticConfigService configService;
+    late _RecordingHelpPrinter helpPrinter;
     late CommandRunner runner;
 
     setUp(() {
@@ -34,15 +35,16 @@ void main() {
       reverseCommand = _RecordingReverseCommand();
       updateService = _RecordingUpdateService();
       configService = _StaticConfigService(const CliConfig());
+      helpPrinter = _RecordingHelpPrinter();
       runner = CommandRunner(
         buildCommand: buildCommand,
         checkCommand: checkCommand,
         updateService: updateService,
         getAllCommand: getAllCommand,
         reverseCommand: reverseCommand,
-        configCommand: ConfigCommand(configService, HelpPrinter()),
+        configCommand: ConfigCommand(configService, helpPrinter),
         configService: configService,
-        helpPrinter: HelpPrinter(),
+        helpPrinter: helpPrinter,
         errorHandler: ErrorHandler(),
       );
     });
@@ -144,6 +146,22 @@ void main() {
       expect(exitCode, 0);
       expect(updateService.checkForUpdatesCalled, isFalse);
       expect(Ansi.enabled, isFalse);
+    });
+
+    test('no args prints help and skips update checks', () async {
+      final exitCode = await runner.run(const []);
+
+      expect(exitCode, 0);
+      expect(helpPrinter.printHelpCalled, isTrue);
+      expect(updateService.checkForUpdatesCalled, isFalse);
+    });
+
+    test('--help prints help and skips update checks', () async {
+      final exitCode = await runner.run(const ['--help']);
+
+      expect(exitCode, 0);
+      expect(helpPrinter.printHelpCalled, isTrue);
+      expect(updateService.checkForUpdatesCalled, isFalse);
     });
   });
 }
@@ -263,5 +281,14 @@ class _RecordingReverseCommand extends ReverseCommand {
   }) async {
     lastPorts = ports;
     return 0;
+  }
+}
+
+class _RecordingHelpPrinter extends HelpPrinter {
+  bool printHelpCalled = false;
+
+  @override
+  void printHelp() {
+    printHelpCalled = true;
   }
 }
